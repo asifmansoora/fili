@@ -161,7 +161,7 @@ class DefaultPhysicalTableResolverSpec  extends Specification {
         DataApiRequest apiRequest = buildDataApiRequest(apiRequestPrototype)
 
         expect:
-        resolver.filter([table], apiRequest, query) == [table] as Set
+        resolver.filter([table], new DataSourceConstraint(apiRequest, query)) == [table] as Set
 
         where:
         grain | dimensions | table
@@ -193,7 +193,7 @@ class DefaultPhysicalTableResolverSpec  extends Specification {
         DataApiRequest apiRequest = buildDataApiRequest(apiRequestPrototype)
 
         expect:
-        resolver.filter([table], apiRequest, query) == [table] as Set
+        resolver.filter([table], new DataSourceConstraint(apiRequest, query)) == [table] as Set
 
         where:
         grainName              | dimensions | table
@@ -224,7 +224,7 @@ class DefaultPhysicalTableResolverSpec  extends Specification {
         DataApiRequest apiRequest = buildDataApiRequest(apiRequestPrototype)
 
         when:
-        resolver.filter([table], apiRequest, query)
+        resolver.filter([table], new DataSourceConstraint(apiRequest, query))
 
         then:
         thrown(NoMatchFoundException)
@@ -251,7 +251,7 @@ class DefaultPhysicalTableResolverSpec  extends Specification {
         DataApiRequest apiRequest = buildDataApiRequest(apiRequestPrototype)
 
         expect:
-        resolver.filter([table], apiRequest, query) == [table] as Set
+        resolver.filter([table], new DataSourceConstraint(apiRequest, query)) == [table] as Set
 
         where:
         dimensions | table
@@ -275,7 +275,7 @@ class DefaultPhysicalTableResolverSpec  extends Specification {
         DataApiRequest apiRequest = buildDataApiRequest(apiRequestPrototype)
 
         when:
-        resolver.filter([table], apiRequest, query)
+        resolver.filter([table], new DataSourceConstraint(apiRequest, query))
 
         then:
         thrown(NoMatchFoundException)
@@ -300,7 +300,7 @@ class DefaultPhysicalTableResolverSpec  extends Specification {
         DataApiRequest apiRequest = buildDataApiRequest(apiRequestPrototype)
 
         expect:
-        resolver.filter([table], apiRequest, query) == [table] as Set
+        resolver.filter([table], new DataSourceConstraint(apiRequest, query)) == [table] as Set
 
         where:
         grain | metrics           | table
@@ -326,7 +326,7 @@ class DefaultPhysicalTableResolverSpec  extends Specification {
         DataApiRequest apiRequest = buildDataApiRequest(apiRequestPrototype)
 
         when:
-        resolver.filter([table], apiRequest, query)
+        resolver.filter([table], new DataSourceConstraint(apiRequest, query))
 
         then:
         thrown(NoMatchFoundException)
@@ -351,7 +351,7 @@ class DefaultPhysicalTableResolverSpec  extends Specification {
         DataApiRequest apiRequest = buildDataApiRequest(apiRequestPrototype)
 
         expect:
-        resolver.filter([table], apiRequest, query) == [table] as Set
+        resolver.filter([table], new DataSourceConstraint(apiRequest, query)) == [table] as Set
 
         where:
         grain | metrics           | table
@@ -378,7 +378,7 @@ class DefaultPhysicalTableResolverSpec  extends Specification {
         DataApiRequest apiRequest = buildDataApiRequest(apiRequestPrototype)
 
         when:
-        resolver.filter([table], apiRequest, query)
+        resolver.filter([table], new DataSourceConstraint(apiRequest, query))
 
         then:
         thrown(NoMatchFoundException)
@@ -401,7 +401,7 @@ class DefaultPhysicalTableResolverSpec  extends Specification {
         apiRequestPrototype['logicalMetrics'] = metricsForNameSet(queryPrototype['dependantFieldNames'] as Set)
         DataApiRequest apiRequest = buildDataApiRequest(apiRequestPrototype)
 
-        BinaryOperator betterTable = resolver.getBetterTableOperator(apiRequest, query)
+        BinaryOperator betterTable = resolver.getBetterTableOperator(new DataSourceConstraint(apiRequest, query))
 
         expect:
         [table1, table2].stream().reduce(betterTable).get() == expected
@@ -427,7 +427,7 @@ class DefaultPhysicalTableResolverSpec  extends Specification {
         apiRequestPrototype['logicalMetrics'] = metricsForNameSet(queryPrototype['dependantFieldNames'] as Set)
         DataApiRequest apiRequest = buildDataApiRequest(apiRequestPrototype)
 
-        BinaryOperator betterTable = resolver.getBetterTableOperator(apiRequest, query)
+        BinaryOperator betterTable = resolver.getBetterTableOperator(new DataSourceConstraint(apiRequest, query))
 
         expect:
         [(PhysicalTable) table1, (PhysicalTable) table2].stream().reduce(betterTable).get() == [table1, table1, table2].get(which)
@@ -482,7 +482,7 @@ class DefaultPhysicalTableResolverSpec  extends Specification {
         DataApiRequest apiRequest = buildDataApiRequest(apiRequestPrototype)
 
         expect:
-        resolver.resolve(resources.tg1All.physicalTables, apiRequest, query) == expected
+        resolver.resolve(resources.tg1All.physicalTables, new DataSourceConstraint(apiRequest, query)) == expected
 
         where:
         intervals                  | grain || expected
@@ -512,7 +512,7 @@ class DefaultPhysicalTableResolverSpec  extends Specification {
         DataApiRequest apiRequest = buildDataApiRequest(apiRequestPrototype)
 
         expect:
-        resolver.resolve(resources.tg1All.physicalTables, apiRequest, query) == expected
+        resolver.resolve(resources.tg1All.physicalTables, new DataSourceConstraint(apiRequest, query)) == expected
 
         where:
         interval    | grain || expected
@@ -551,7 +551,7 @@ class DefaultPhysicalTableResolverSpec  extends Specification {
         DataApiRequest apiRequest = buildDataApiRequest(apiRequestPrototype)
 
         expect: "The table with more data available is preferred"
-        localResolver.resolve([resources.volatileHourTable, resources.volatileDayTable], apiRequest, query) == expected
+        localResolver.resolve([resources.volatileHourTable, resources.volatileDayTable], new DataSourceConstraint(apiRequest, query)) == expected
 
         where:
         hourAvailable           | hourVolatile            | dayAvailable            | dayVolatile             | grain || expected
@@ -579,7 +579,7 @@ class DefaultPhysicalTableResolverSpec  extends Specification {
         DataApiRequest apiRequest = buildDataApiRequest(apiRequestPrototype)
 
         expect:
-        resolver.resolve(tablegroup.physicalTables, apiRequest, query) == expected
+        resolver.resolve(tablegroup.physicalTables, new DataSourceConstraint(apiRequest, query)) == expected
 
         where:
         grain | dimensions | tablegroup     | metrics             | expected
@@ -607,7 +607,7 @@ class DefaultPhysicalTableResolverSpec  extends Specification {
         DataApiRequest apiRequest = buildDataApiRequest(apiRequestPrototype)
 
         when:
-        resolver.resolve(tablegroup.physicalTables, apiRequest, query)
+        resolver.resolve(tablegroup.physicalTables, new DataSourceConstraint(apiRequest, query))
 
         then:
         thrown(NoMatchFoundException)
@@ -632,7 +632,7 @@ class DefaultPhysicalTableResolverSpec  extends Specification {
         DataApiRequest apiRequest = buildDataApiRequest(apiRequestPrototype)
 
         expect:
-        resolver.resolve(tablegroup.physicalTables, apiRequest, query) == table
+        resolver.resolve(tablegroup.physicalTables, new DataSourceConstraint(apiRequest, query)) == table
 
         where:
         grain | dimensions | tablegroup     | table

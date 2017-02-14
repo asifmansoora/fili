@@ -2,71 +2,45 @@
 // Licensed under the terms of the Apache license. Please see LICENSE.md file distributed with this work for terms.
 package com.yahoo.bard.webservice.table.resolver
 
-import static com.yahoo.bard.webservice.data.time.DefaultTimeGrain.DAY
-import static org.joda.time.DateTimeZone.UTC
-
-import com.yahoo.bard.webservice.data.metric.TemplateDruidQuery
-import com.yahoo.bard.webservice.druid.model.query.AllGranularity
-import com.yahoo.bard.webservice.table.ConcretePhysicalTable
-import com.yahoo.bard.webservice.table.LogicalTable
 import com.yahoo.bard.webservice.table.PhysicalTable
-import com.yahoo.bard.webservice.table.TableGroup
-import com.yahoo.bard.webservice.web.DataApiRequest
 
-import com.google.common.collect.Sets
+import com.codahale.metrics.MetricRegistryListener
 
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
 
 import java.util.function.BinaryOperator
+
 /**
  *  Tests for methods in BasePhysicalResolverSpec
  */
 class BasePhysicalTableResolverSpec extends Specification {
 
-    List<PhysicalTable> tables
+    @Shared PhysicalTable one, two, three
     @Shared PhysicalTableMatcher matchAllButTablesNamedOne, matchThree, matchAll
-    @Shared BinaryOperator<PhysicalTable> pickFirst
-    @Shared BinaryOperator<PhysicalTable> pickLast
-    @Shared PhysicalTable one = Mock(PhysicalTable)
-    @Shared PhysicalTable two = Mock(PhysicalTable)
-    @Shared PhysicalTable three = Mock(PhysicalTable)
+    @Shared BinaryOperator<PhysicalTable> pickFirst, pickLast
+    @Shared NoMatchFoundException noMatchNotAny, noMatchNotOne, noMatchThree
 
-    @Shared NoMatchFoundException noMatchNotAny = new NoMatchFoundException("notAny")
-    @Shared NoMatchFoundException noMatchNotOne = new NoMatchFoundException("notOne")
-    @Shared NoMatchFoundException noMatchThree = new NoMatchFoundException("three")
-
-    DataApiRequest request = Mock(DataApiRequest)
-    TemplateDruidQuery query = Mock(TemplateDruidQuery)
-
-    BasePhysicalTableResolver physicalTableResolver = new BasePhysicalTableResolver() {
-
-        List<PhysicalTableMatcher> matchers
-        BinaryOperator<PhysicalTable> betterTable
-
-        @Override
-        List<PhysicalTableMatcher> getMatchers(DataApiRequest apiRequest, TemplateDruidQuery query) {
-            return matchers
-        }
-
-        @Override
-        BinaryOperator<PhysicalTable> getBetterTableOperator(DataApiRequest apiRequest, TemplateDruidQuery query) {
-            return betterTable
-        }
-    }
-
+    BasePhysicalTableResolver physicalTableResolver
+    DataSourceConstraint dataSourceConstraint
 
     def setupSpec() {
+        one = Mock(PhysicalTable)
+        two = Mock(PhysicalTable)
+        three = Mock(PhysicalTable)
+
         one.getName() >> "one"
-        one.toString() >> "one"
         two.getName() >> "two"
-        two.toString() >> "two"
         three.getName() >> "three"
-        three.toString() >> "three"
 
         pickFirst = { PhysicalTable table1, PhysicalTable table2 -> table1 } as BinaryOperator<PhysicalTable>
         pickLast  = { PhysicalTable table1, PhysicalTable table2 -> table2 } as BinaryOperator<PhysicalTable>
+
+        noMatchNotAny = new NoMatchFoundException("No Match Found: notAny")
+        noMatchNotOne = new NoMatchFoundException("No Match Found: notOne")
+        noMatchThree = new NoMatchFoundException("No Match Found: three")
+
         matchAll = new PhysicalTableMatcher() {
             @Override
             boolean test(PhysicalTable table) {
@@ -120,28 +94,32 @@ class BasePhysicalTableResolverSpec extends Specification {
     }
 
     def setup() {
-        request.getGranularity() >> AllGranularity.INSTANCE
-        query.getInnermostQuery() >> query
-        query.getDimensions() >> []
-        query.getMetricDimensions() >> ([] as Set)
-        query.getDependentFieldNames() >> ([] as Set)
-        request.getFilterDimensions() >> []
-        request.getDimensions() >> ([] as Set)
+        dataSourceConstraint = Mock(DataSourceConstraint)
 
-        LogicalTable logical = Mock(LogicalTable.class)
-        TableGroup group = Mock(TableGroup.class)
-        logical.getTableGroup() >> group
-        PhysicalTable table = new ConcretePhysicalTable("table_name", DAY.buildZonedTimeGrain(UTC), [] as Set, [:])
-        group.getPhysicalTables() >> Sets.newHashSet(table)
-        request.getTable() >> logical
+        physicalTableResolver = new BasePhysicalTableResolver() {
+
+            List<PhysicalTableMatcher> matchers
+            BinaryOperator<PhysicalTable> betterTable
+
+            @Override
+            List<PhysicalTableMatcher> getMatchers(DataSourceConstraint requestConstraints) {
+                return matchers
+            }
+
+            @Override
+            BinaryOperator<PhysicalTable> getBetterTableOperator(DataSourceConstraint requestConstraints) {
+                return betterTable
+            }
+        }
     }
+
     @Unroll
     def "Test matchers with no empties to #expected"() {
         setup:
-        physicalTableResolver.matchers = matchers as List
+        physicalTableResolver.matchers = matchers
 
         expect:
-        physicalTableResolver.filter( [one, two, three] as List, request, query) ==  expected as Set
+        physicalTableResolver.filter([one, two, three], dataSourceConstraint) ==  expected.toSet()
 
         where:
         matchers                                | expected
@@ -154,13 +132,15 @@ class BasePhysicalTableResolverSpec extends Specification {
     @Unroll
     def "Test matchers with throw no match exception with #matchers and #supply"() {
         setup:
-        physicalTableResolver.matchers = matchers as List
+        physicalTableResolver.matchers = matchers
 
         when:
-        physicalTableResolver.filter( supply as List, request, query)
+        physicalTableResolver.filter( supply, dataSourceConstraint)
 
         then:
-        thrown(NoMatchFoundException)
+        NoMatchFoundException noMatchFoundException = thrown()
+        noMatchFoundException.message.startsWith('No Match Found: ')
+
 
         where:
         matchers                                | supply       | noMatch
@@ -178,7 +158,7 @@ class BasePhysicalTableResolverSpec extends Specification {
         physicalTableResolver.betterTable = better
 
         expect:
-        physicalTableResolver.resolve([one, two, three], request, query) == expected
+        physicalTableResolver.resolve([one, two, three], dataSourceConstraint) == expected
 
         where:
         matchers                                | better    | expected

@@ -5,7 +5,6 @@ package com.yahoo.bard.webservice.table.resolver;
 import com.yahoo.bard.webservice.table.PhysicalTable;
 import com.yahoo.bard.webservice.table.availability.IsTableAligned;
 import com.yahoo.bard.webservice.table.availability.IsTableStartAlignedWithIntervals;
-import com.yahoo.bard.webservice.web.DataApiRequest;
 import com.yahoo.bard.webservice.web.ErrorMessageFormat;
 
 import org.joda.time.Interval;
@@ -31,15 +30,15 @@ public class TimeAlignmentPhysicalTableMatcher implements PhysicalTableMatcher {
      * Stores the request table name and intervals and creates a predicate to test a physical table based on request
      * intervals.
      *
-     * @param request  The Api Request being matched against
+     * @param requestConstraints Contains the request constraints extracted from DataApiRequest and TemplateDruidQuery
      */
-    public TimeAlignmentPhysicalTableMatcher(DataApiRequest request) {
-        if (request.getIntervals().isEmpty()) {
+    public TimeAlignmentPhysicalTableMatcher(DataSourceConstraint requestConstraints) {
+        if (requestConstraints.getIntervals().isEmpty()) {
             throw new IllegalStateException("Intervals cannot be empty");
         }
-        logicalTableName = request.getTable().getName();
-        requestIntervals = request.getIntervals();
-        isTableAligned = new IsTableStartAlignedWithIntervals(request.getIntervals());
+        logicalTableName = requestConstraints.getLogicalTable().getName();
+        requestIntervals = requestConstraints.getIntervals();
+        isTableAligned = new IsTableStartAlignedWithIntervals(requestConstraints.getIntervals());
     }
 
     @Override

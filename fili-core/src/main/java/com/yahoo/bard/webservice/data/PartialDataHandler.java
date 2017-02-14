@@ -8,9 +8,9 @@ import com.yahoo.bard.webservice.druid.model.query.AllGranularity;
 import com.yahoo.bard.webservice.druid.model.query.DruidAggregationQuery;
 import com.yahoo.bard.webservice.druid.model.query.Granularity;
 import com.yahoo.bard.webservice.table.PhysicalTable;
+import com.yahoo.bard.webservice.table.resolver.DataSourceConstraint;
 import com.yahoo.bard.webservice.util.IntervalUtils;
 import com.yahoo.bard.webservice.util.SimplifiedIntervalList;
-import com.yahoo.bard.webservice.util.TableUtils;
 import com.yahoo.bard.webservice.web.DataApiRequest;
 
 import org.slf4j.Logger;
@@ -57,8 +57,7 @@ public class PartialDataHandler {
             throw new IllegalArgumentException(message);
         }
         return findMissingTimeGrainIntervals(
-                apiRequest,
-                query,
+                new DataSourceConstraint(apiRequest, query),
                 physicalTables,
                 new SimplifiedIntervalList(apiRequest.getIntervals()),
                 apiRequest.getGranularity()
@@ -79,8 +78,7 @@ public class PartialDataHandler {
      * present for a given combination of request metrics and dimensions (pulled from the API request and generated
      * druid query) at the specified granularity.
      *
-     * @param apiRequest  api request made by the end user
-     * @param query  used to fetch data from druid
+     * @param requestConstraints Contains the request constraints extracted from DataApiRequest and TemplateDruidQuery
      * @param physicalTables  the tables whose column availabilities are checked
      * @param requestedIntervals  The intervals that may not be fully satisfied
      * @param granularity  The granularity at which to find missing intervals
@@ -88,14 +86,13 @@ public class PartialDataHandler {
      * @return subintervals of the requested intervals with incomplete data
      */
     public SimplifiedIntervalList findMissingTimeGrainIntervals(
-            DataApiRequest apiRequest,
-            DruidAggregationQuery<?> query,
+            DataSourceConstraint requestConstraints,
             Set<PhysicalTable> physicalTables,
             @NotNull SimplifiedIntervalList requestedIntervals,
             Granularity granularity
     ) {
         SimplifiedIntervalList availableIntervals = physicalTables.stream()
-                .map(table -> getAvailability(table, TableUtils.getColumnNames(apiRequest, query)))
+                .map(table -> getAvailability(table, requestConstraints.getAllColumnNames()))
                 .flatMap(SimplifiedIntervalList::stream)
                 .collect(SimplifiedIntervalList.getCollector());
 
@@ -104,6 +101,7 @@ public class PartialDataHandler {
                 requestedIntervals,
                 granularity
         );
+
         if (granularity instanceof AllGranularity && !missingIntervals.isEmpty()) {
             missingIntervals = requestedIntervals;
         }

@@ -3,8 +3,6 @@
 package com.yahoo.bard.webservice.table.resolver;
 
 import com.yahoo.bard.webservice.table.PhysicalTable;
-import com.yahoo.bard.webservice.data.metric.TemplateDruidQuery;
-import com.yahoo.bard.webservice.web.DataApiRequest;
 
 import java.util.Collection;
 
@@ -18,8 +16,7 @@ public interface PhysicalTableResolver {
      * Choose the best fit Physical Table from a table group.
      *
      * @param candidateTables  The tables being considered for match
-     * @param apiRequest  The ApiRequest for the query
-     * @param query  a partial query representation
+     * @param requestConstraints Contains the request constraints extracted from DataApiRequest and TemplateDruidQuery
      *
      * @return The table, if any, that satisfies all criteria and best matches the query
      *
@@ -27,7 +24,6 @@ public interface PhysicalTableResolver {
      */
     PhysicalTable resolve(
             Collection<PhysicalTable> candidateTables,
-            DataApiRequest apiRequest,
-            TemplateDruidQuery query
+            DataSourceConstraint requestConstraints
     ) throws NoMatchFoundException;
 }

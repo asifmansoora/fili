@@ -27,6 +27,7 @@ import com.yahoo.bard.webservice.table.LogicalTableDictionary;
 import com.yahoo.bard.webservice.table.PhysicalTable;
 import com.yahoo.bard.webservice.table.TableGroup;
 import com.yahoo.bard.webservice.table.TableIdentifier;
+import com.yahoo.bard.webservice.table.resolver.DataSourceConstraint;
 import com.yahoo.bard.webservice.table.resolver.NoMatchFoundException;
 import com.yahoo.bard.webservice.table.resolver.PhysicalTableResolver;
 import com.yahoo.bard.webservice.web.DataApiRequest;
@@ -115,7 +116,7 @@ public class DruidQueryBuilder {
         TableGroup group = logicalTable.getTableGroup();
 
         // Resolve the table from the the group, the combined dimensions in request, and template time grain
-        PhysicalTable table = resolver.resolve(group.getPhysicalTables(), request, template);
+        PhysicalTable table = resolver.resolve(group.getPhysicalTables(), new DataSourceConstraint(request, template));
 
         return druidTopNMetric != null ?
             buildTopNQuery(

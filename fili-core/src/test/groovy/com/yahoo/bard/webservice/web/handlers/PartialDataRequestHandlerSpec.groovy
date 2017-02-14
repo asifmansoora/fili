@@ -12,6 +12,7 @@ import com.yahoo.bard.webservice.druid.model.datasource.DataSource
 import com.yahoo.bard.webservice.druid.model.query.GroupByQuery
 import com.yahoo.bard.webservice.table.PhysicalTable
 import com.yahoo.bard.webservice.table.PhysicalTableDictionary
+import com.yahoo.bard.webservice.table.resolver.DataSourceConstraint
 import com.yahoo.bard.webservice.util.SimplifiedIntervalList
 import com.yahoo.bard.webservice.web.DataApiRequest
 import com.yahoo.bard.webservice.web.responseprocessors.MappingResponseProcessor
@@ -71,8 +72,7 @@ class PartialDataRequestHandlerSpec extends Specification {
         then:
         success
         1 * partialDataHandler.findMissingTimeGrainIntervals(
-                apiRequest,
-                groupByQuery,
+                _,
                 physicalTables,
                 new SimplifiedIntervalList(apiRequest.intervals),
                 apiRequest.granularity
@@ -104,8 +104,7 @@ class PartialDataRequestHandlerSpec extends Specification {
         then:
         success
         1 * partialDataHandler.findMissingTimeGrainIntervals(
-                apiRequest,
-                groupByQuery,
+                _,
                 physicalTables,
                 new SimplifiedIntervalList(apiRequest.intervals),
                 apiRequest.granularity
@@ -150,8 +149,7 @@ class PartialDataRequestHandlerSpec extends Specification {
         then:
         success
         1 * partialDataHandler.findMissingTimeGrainIntervals(
-                apiRequest,
-                groupByQuery,
+                _,
                 physicalTables,
                 new SimplifiedIntervalList(apiRequest.intervals),
                 apiRequest.granularity
