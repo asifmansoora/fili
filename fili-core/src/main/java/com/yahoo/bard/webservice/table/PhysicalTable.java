@@ -2,6 +2,7 @@
 // Licensed under the terms of the Apache license. Please see LICENSE.md file distributed with this work for terms.
 package com.yahoo.bard.webservice.table;
 
+import com.yahoo.bard.webservice.data.config.names.TableName;
 import com.yahoo.bard.webservice.data.time.ZonedTimeGrain;
 import com.yahoo.bard.webservice.druid.model.query.Granularity;
 import com.yahoo.bard.webservice.table.availability.Availability;
@@ -41,6 +42,13 @@ public interface PhysicalTable extends Table {
      * @return True if contains a non-default mapping for the logical name, false otherwise
      */
     boolean hasLogicalMapping(String logicalName);
+
+    /**
+     * Get the name of the current table.
+     *
+     * @return name of the table as TableName
+     */
+    TableName getTableName();
 
     @Override
     String getName();

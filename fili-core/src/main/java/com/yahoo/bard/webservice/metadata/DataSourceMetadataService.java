@@ -2,6 +2,7 @@
 // Licensed under the terms of the Apache license. Please see LICENSE.md file distributed with this work for terms.
 package com.yahoo.bard.webservice.metadata;
 
+import com.yahoo.bard.webservice.data.config.names.TableName;
 import com.yahoo.bard.webservice.table.PhysicalTable;
 
 import org.joda.time.DateTime;
@@ -28,7 +29,7 @@ public class DataSourceMetadataService {
     /**
      * The container that holds the segment metadata for every table. It should support concurrent access.
      */
-    private final Map<PhysicalTable, AtomicReference<ConcurrentSkipListMap<DateTime, Map<String, SegmentInfo>>>>
+    private final Map<TableName, AtomicReference<ConcurrentSkipListMap<DateTime, Map<String, SegmentInfo>>>>
             allSegments;
 
     /**
@@ -62,7 +63,7 @@ public class DataSourceMetadataService {
                         )
                 );
 
-        allSegments.computeIfAbsent(table, ignored -> new AtomicReference<>()).set(current);
+        allSegments.computeIfAbsent(table.getTableName(), ignored -> new AtomicReference<>()).set(current);
     }
 
     /**
@@ -87,11 +88,11 @@ public class DataSourceMetadataService {
     /**
      * Get all the segments associated with the given Set of physical tables.
      *
-     * @param physicalTables  A Set of physicalTables used by the DruidQuery
+     * @param physicalTables  A Set of physical TableNames used by the DruidQuery
      *
      * @return A set of segments associated with the given tables
      */
-    public Set<SortedMap<DateTime, Map<String, SegmentInfo>>> getTableSegments(Set<PhysicalTable> physicalTables) {
+    public Set<SortedMap<DateTime, Map<String, SegmentInfo>>> getTableSegments(Set<TableName> physicalTables) {
         return physicalTables.stream()
                 .map(allSegments::get)
                 .filter(Objects::nonNull)

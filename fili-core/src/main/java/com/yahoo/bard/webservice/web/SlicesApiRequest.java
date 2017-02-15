@@ -189,7 +189,7 @@ public class SlicesApiRequest extends ApiRequest {
                 );
 
         Set<SortedMap<DateTime, Map<String, SegmentInfo>>> sliceMetadata = dataSourceMetadataService.getTableSegments(
-                Collections.singleton(table)
+                Collections.singleton(table.getTableName())
         );
 
         Map<String, Object> generated = new LinkedHashMap<>();

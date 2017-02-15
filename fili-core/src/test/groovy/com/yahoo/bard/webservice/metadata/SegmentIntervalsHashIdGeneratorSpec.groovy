@@ -94,7 +94,7 @@ class SegmentIntervalsHashIdGeneratorSpec extends BaseDataSourceMetadataSpec {
         atomicRef.set(availabilityList1)
 
         metadataService.allSegments.put(
-                tableDict.get(tableName),
+                tableDict.get(tableName).getTableName(),
                 atomicRef
         );
 

@@ -92,7 +92,11 @@ public class SegmentIntervalsHashIdGenerator implements QuerySigningService<Long
 
         //get all table segments
         Set<SortedMap<DateTime, Map<String, SegmentInfo>>> tableSegments =
-                dataSourceMetadataService.getTableSegments(physicalTables);
+                dataSourceMetadataService.getTableSegments(
+                        physicalTables.stream()
+                                .map(PhysicalTable::getTableName)
+                                .collect(Collectors.toSet())
+                );
 
         // Check if we have no tables with segments
         if (tableSegments.isEmpty()) {

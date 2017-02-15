@@ -26,10 +26,10 @@ class DataSourceMetadataServiceSpec extends BaseDataSourceMetadataSpec {
         metadataService.update(tableDict.get(tableName), metadata)
 
         then:
-        metadataService.allSegments.get(tableDict.get(tableName)) instanceof AtomicReference
+        metadataService.allSegments.get(tableDict.get(tableName).getTableName()) instanceof AtomicReference
 
         and:
-        metadataService.allSegments.get(tableDict.get(tableName)).get().values()*.keySet() as List ==
+        metadataService.allSegments.get(tableDict.get(tableName).getTableName()).get().values()*.keySet() as List ==
         [
                 [segment1.getIdentifier(), segment2.getIdentifier()] as Set,
                 [segment3.getIdentifier(), segment4.getIdentifier()] as Set
