@@ -8,7 +8,7 @@ import com.yahoo.bard.webservice.druid.model.query.AllGranularity;
 import com.yahoo.bard.webservice.druid.model.query.DruidAggregationQuery;
 import com.yahoo.bard.webservice.druid.model.query.Granularity;
 import com.yahoo.bard.webservice.table.PhysicalTable;
-import com.yahoo.bard.webservice.table.resolver.DataSourceConstraint;
+import com.yahoo.bard.webservice.table.resolver.QueryPlanningConstraint;
 import com.yahoo.bard.webservice.util.IntervalUtils;
 import com.yahoo.bard.webservice.util.SimplifiedIntervalList;
 import com.yahoo.bard.webservice.web.DataApiRequest;
@@ -57,7 +57,7 @@ public class PartialDataHandler {
             throw new IllegalArgumentException(message);
         }
         return findMissingTimeGrainIntervals(
-                new DataSourceConstraint(apiRequest, query),
+                new QueryPlanningConstraint(apiRequest, query),
                 physicalTables,
                 new SimplifiedIntervalList(apiRequest.getIntervals()),
                 apiRequest.getGranularity()
@@ -86,7 +86,7 @@ public class PartialDataHandler {
      * @return subintervals of the requested intervals with incomplete data
      */
     public SimplifiedIntervalList findMissingTimeGrainIntervals(
-            DataSourceConstraint requestConstraints,
+            QueryPlanningConstraint requestConstraints,
             Set<PhysicalTable> physicalTables,
             @NotNull SimplifiedIntervalList requestedIntervals,
             Granularity granularity

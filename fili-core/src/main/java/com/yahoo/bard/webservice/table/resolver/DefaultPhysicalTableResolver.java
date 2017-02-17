@@ -49,7 +49,7 @@ public class DefaultPhysicalTableResolver extends BasePhysicalTableResolver {
     }
 
     @Override
-    public List<PhysicalTableMatcher> getMatchers(DataSourceConstraint requestConstraints) {
+    public List<PhysicalTableMatcher> getMatchers(QueryPlanningConstraint requestConstraints) {
         SchemaPhysicalTableMatcher schemaMatcher = new SchemaPhysicalTableMatcher(requestConstraints);
         TimeAlignmentPhysicalTableMatcher timeAlignmentMatcher = new TimeAlignmentPhysicalTableMatcher(
                 requestConstraints
@@ -60,7 +60,7 @@ public class DefaultPhysicalTableResolver extends BasePhysicalTableResolver {
     }
 
     @Override
-    public BinaryOperator<PhysicalTable> getBetterTableOperator(DataSourceConstraint requestConstraints) {
+    public BinaryOperator<PhysicalTable> getBetterTableOperator(QueryPlanningConstraint requestConstraints) {
         List<Comparator<PhysicalTable>> comparators = new ArrayList<>();
 
         if (BardFeatureFlag.PARTIAL_DATA.isOn()) {

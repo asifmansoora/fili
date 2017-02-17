@@ -81,7 +81,7 @@ class SchemaPhysicalTableMatcherSpec extends Specification {
 
         dimensionDictionary = new DimensionDictionary(dimSet)
         schemaPhysicalTableMatcher = new SchemaPhysicalTableMatcher(
-                new DataSourceConstraint(request, query)
+                new QueryPlanningConstraint(request, query)
         )
     }
 

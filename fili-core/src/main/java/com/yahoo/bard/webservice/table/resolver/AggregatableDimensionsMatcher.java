@@ -26,14 +26,14 @@ public class AggregatableDimensionsMatcher implements PhysicalTableMatcher {
 
     public static final ErrorMessageFormat MESSAGE_FORMAT = NO_TABLE_FOR_NON_AGGREGATABLE;
 
-    private final DataSourceConstraint requestConstraints;
+    private final QueryPlanningConstraint requestConstraints;
 
     /**
      * Constructor saves metrics, dimensions, coarsest time grain, and logical table name (for logging).
      *
      * @param requestConstraints Contains the request constraints extracted from DataApiRequest and TemplateDruidQuery
      */
-    public AggregatableDimensionsMatcher(DataSourceConstraint requestConstraints) {
+    public AggregatableDimensionsMatcher(QueryPlanningConstraint requestConstraints) {
         this.requestConstraints = requestConstraints;
     }
 

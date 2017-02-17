@@ -32,7 +32,7 @@ public class TimeAlignmentPhysicalTableMatcher implements PhysicalTableMatcher {
      *
      * @param requestConstraints Contains the request constraints extracted from DataApiRequest and TemplateDruidQuery
      */
-    public TimeAlignmentPhysicalTableMatcher(DataSourceConstraint requestConstraints) {
+    public TimeAlignmentPhysicalTableMatcher(QueryPlanningConstraint requestConstraints) {
         if (requestConstraints.getIntervals().isEmpty()) {
             throw new IllegalStateException("Intervals cannot be empty");
         }

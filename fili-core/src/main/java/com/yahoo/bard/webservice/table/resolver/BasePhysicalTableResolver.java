@@ -45,7 +45,7 @@ public abstract class BasePhysicalTableResolver implements PhysicalTableResolver
      *
      * @return a list of matchers to be applied, in order
      */
-    public abstract List<PhysicalTableMatcher> getMatchers(DataSourceConstraint requestConstraints);
+    public abstract List<PhysicalTableMatcher> getMatchers(QueryPlanningConstraint requestConstraints);
 
     /**
      * Create a binary operator which returns the 'better' of two physical table.
@@ -54,7 +54,7 @@ public abstract class BasePhysicalTableResolver implements PhysicalTableResolver
      *
      * @return a list of matchers to be applied, in order
      */
-    public abstract BinaryOperator<PhysicalTable> getBetterTableOperator(DataSourceConstraint requestConstraints);
+    public abstract BinaryOperator<PhysicalTable> getBetterTableOperator(QueryPlanningConstraint requestConstraints);
 
     /**
      * Filter to a set of tables matching the rules of this resolver.
@@ -68,7 +68,7 @@ public abstract class BasePhysicalTableResolver implements PhysicalTableResolver
      */
     protected Set<PhysicalTable> filter(
             Collection<PhysicalTable> candidateTables,
-            DataSourceConstraint requestConstraints
+            QueryPlanningConstraint requestConstraints
     ) throws NoMatchFoundException {
         return filter(candidateTables, getMatchers(requestConstraints));
     }
@@ -97,7 +97,7 @@ public abstract class BasePhysicalTableResolver implements PhysicalTableResolver
     @Override
     public PhysicalTable resolve(
             Collection<PhysicalTable> candidateTables,
-            DataSourceConstraint requestConstraints
+            QueryPlanningConstraint requestConstraints
     ) throws NoMatchFoundException {
 
         // Minimum grain at which the request can be aggregated from
@@ -133,7 +133,7 @@ public abstract class BasePhysicalTableResolver implements PhysicalTableResolver
      * @param minimumTableTimeGrain  Minimum grain that we needed to meet
      */
     public void logMatchException(
-            DataSourceConstraint requestConstraints,
+            QueryPlanningConstraint requestConstraints,
             Granularity minimumTableTimeGrain
     ) {
         // Get the dimensions and metrics as lists of names

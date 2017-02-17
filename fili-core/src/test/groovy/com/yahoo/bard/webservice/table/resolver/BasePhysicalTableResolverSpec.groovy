@@ -4,8 +4,6 @@ package com.yahoo.bard.webservice.table.resolver
 
 import com.yahoo.bard.webservice.table.PhysicalTable
 
-import com.codahale.metrics.MetricRegistryListener
-
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -23,7 +21,7 @@ class BasePhysicalTableResolverSpec extends Specification {
     @Shared NoMatchFoundException noMatchNotAny, noMatchNotOne, noMatchThree
 
     BasePhysicalTableResolver physicalTableResolver
-    DataSourceConstraint dataSourceConstraint
+    QueryPlanningConstraint dataSourceConstraint
 
     def setupSpec() {
         one = Mock(PhysicalTable)
@@ -94,7 +92,7 @@ class BasePhysicalTableResolverSpec extends Specification {
     }
 
     def setup() {
-        dataSourceConstraint = Mock(DataSourceConstraint)
+        dataSourceConstraint = Mock(QueryPlanningConstraint)
 
         physicalTableResolver = new BasePhysicalTableResolver() {
 
@@ -102,12 +100,12 @@ class BasePhysicalTableResolverSpec extends Specification {
             BinaryOperator<PhysicalTable> betterTable
 
             @Override
-            List<PhysicalTableMatcher> getMatchers(DataSourceConstraint requestConstraints) {
+            List<PhysicalTableMatcher> getMatchers(QueryPlanningConstraint requestConstraints) {
                 return matchers
             }
 
             @Override
-            BinaryOperator<PhysicalTable> getBetterTableOperator(DataSourceConstraint requestConstraints) {
+            BinaryOperator<PhysicalTable> getBetterTableOperator(QueryPlanningConstraint requestConstraints) {
                 return betterTable
             }
         }

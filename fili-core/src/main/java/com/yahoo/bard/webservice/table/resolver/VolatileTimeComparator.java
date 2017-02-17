@@ -17,7 +17,7 @@ import java.util.Comparator;
  */
 public class VolatileTimeComparator implements Comparator<PhysicalTable> {
 
-    private final DataSourceConstraint requestConstraints;
+    private final QueryPlanningConstraint requestConstraints;
     private final PartialDataHandler partialDataHandler;
     private final VolatileIntervalsService volatileIntervalsService;
 
@@ -30,7 +30,7 @@ public class VolatileTimeComparator implements Comparator<PhysicalTable> {
      * to a given table
      */
     public VolatileTimeComparator(
-            DataSourceConstraint requestConstraints,
+            QueryPlanningConstraint requestConstraints,
             PartialDataHandler partialDataHandler,
             VolatileIntervalsService volatileIntervalsService
     ) {

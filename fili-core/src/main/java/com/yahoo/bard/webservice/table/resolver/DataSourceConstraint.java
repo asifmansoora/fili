@@ -18,10 +18,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * Constraints used to filter and resolve tables being selected.
+ * Constraints for retrieving the potential intervals.
  */
 public class DataSourceConstraint {
-
     LogicalTable logicalTable;
     Granularity requestGranularity;
     Granularity metricGranularity;

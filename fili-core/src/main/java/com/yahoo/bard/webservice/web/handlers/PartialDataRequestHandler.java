@@ -10,7 +10,7 @@ import com.yahoo.bard.webservice.data.metric.mappers.PartialDataResultSetMapper;
 import com.yahoo.bard.webservice.druid.model.query.DruidAggregationQuery;
 import com.yahoo.bard.webservice.table.PhysicalTable;
 import com.yahoo.bard.webservice.table.PhysicalTableDictionary;
-import com.yahoo.bard.webservice.table.resolver.DataSourceConstraint;
+import com.yahoo.bard.webservice.table.resolver.QueryPlanningConstraint;
 import com.yahoo.bard.webservice.util.SimplifiedIntervalList;
 import com.yahoo.bard.webservice.web.DataApiRequest;
 import com.yahoo.bard.webservice.web.responseprocessors.MappingResponseProcessor;
@@ -74,7 +74,7 @@ public class PartialDataRequestHandler implements DataRequestHandler {
 
         // Gather the missing intervals
         SimplifiedIntervalList missingIntervals = partialDataHandler.findMissingTimeGrainIntervals(
-                new DataSourceConstraint(request, druidQuery),
+                new QueryPlanningConstraint(request, druidQuery),
                 physicalTables,
                 new SimplifiedIntervalList(request.getIntervals()),
                 request.getGranularity()

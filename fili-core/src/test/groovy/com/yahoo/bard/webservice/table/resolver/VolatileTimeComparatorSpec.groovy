@@ -45,7 +45,7 @@ class VolatileTimeComparatorSpec extends Specification {
 
         and: "The volatile time comparator under test"
         VolatileTimeComparator comparator = new VolatileTimeComparator(
-                new DataSourceConstraint(request, query),
+                new QueryPlanningConstraint(request, query),
                 new PartialDataHandler(),
                 resources.volatileIntervalsService
         )
@@ -97,7 +97,7 @@ class VolatileTimeComparatorSpec extends Specification {
 
         and: "The volatile time comparator under test"
         VolatileTimeComparator comparator = new VolatileTimeComparator(
-                new DataSourceConstraint(request, query),
+                new QueryPlanningConstraint(request, query),
                 new PartialDataHandler(),
                 resources.volatileIntervalsService
         )

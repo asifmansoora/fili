@@ -24,6 +24,6 @@ public interface PhysicalTableResolver {
      */
     PhysicalTable resolve(
             Collection<PhysicalTable> candidateTables,
-            DataSourceConstraint requestConstraints
+            QueryPlanningConstraint requestConstraints
     ) throws NoMatchFoundException;
 }

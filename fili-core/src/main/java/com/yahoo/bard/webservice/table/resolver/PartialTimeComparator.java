@@ -16,7 +16,7 @@ import java.util.Comparator;
 public class PartialTimeComparator implements Comparator<PhysicalTable> {
 
     private final PartialDataHandler partialDataHandler;
-    private final DataSourceConstraint requestConstraints;
+    private final QueryPlanningConstraint requestConstraints;
 
     /**
      * Constructor.
@@ -24,7 +24,7 @@ public class PartialTimeComparator implements Comparator<PhysicalTable> {
      * @param requestConstraints Contains the request constraints extracted from DataApiRequest and TemplateDruidQuery
      * @param handler  Handler for Partial Data
      */
-    public PartialTimeComparator(DataSourceConstraint requestConstraints, PartialDataHandler handler) {
+    public PartialTimeComparator(QueryPlanningConstraint requestConstraints, PartialDataHandler handler) {
         this.requestConstraints = requestConstraints;
         this.partialDataHandler = handler;
     }

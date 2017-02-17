@@ -10,16 +10,13 @@ import static org.joda.time.DateTimeZone.UTC
 import com.yahoo.bard.webservice.data.dimension.Dimension
 import com.yahoo.bard.webservice.data.dimension.DimensionDictionary
 import com.yahoo.bard.webservice.data.dimension.impl.KeyValueStoreDimension
-import com.yahoo.bard.webservice.druid.model.datasource.QueryDataSource
-import com.yahoo.bard.webservice.druid.model.datasource.TableDataSource
 import com.yahoo.bard.webservice.druid.model.query.AllGranularity
 import com.yahoo.bard.webservice.druid.model.query.GroupByQuery
 import com.yahoo.bard.webservice.metadata.SegmentMetadata
 import com.yahoo.bard.webservice.table.ConcretePhysicalTable
 import com.yahoo.bard.webservice.table.PhysicalTable
-import com.yahoo.bard.webservice.table.resolver.DataSourceConstraint
+import com.yahoo.bard.webservice.table.resolver.QueryPlanningConstraint
 import com.yahoo.bard.webservice.util.SimplifiedIntervalList
-import com.yahoo.bard.webservice.web.DataApiRequest
 
 import org.joda.time.Interval
 
@@ -45,7 +42,7 @@ class PartialDataHandlerSpec extends Specification {
     Set<String> columnNames
     GroupByQuery groupByQuery = Mock(GroupByQuery.class)
     DimensionDictionary dimensionDictionary
-    DataSourceConstraint dataSourceConstraint
+    QueryPlanningConstraint dataSourceConstraint
 
     def cleanup() {
         PERMISSIVE_COLUMN_AVAILABILITY.setOn(originalConfig)
@@ -65,7 +62,7 @@ class PartialDataHandlerSpec extends Specification {
         dimensionDictionary = new DimensionDictionary([dim1, dim2, dim3] as Set)
 
         // Setup mock Request
-        dataSourceConstraint = Stub(DataSourceConstraint)
+        dataSourceConstraint = Stub(QueryPlanningConstraint)
         dataSourceConstraint.getAllColumnNames() >> columnNames
 
         /*

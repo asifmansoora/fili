@@ -24,14 +24,14 @@ public class SchemaPhysicalTableMatcher implements PhysicalTableMatcher {
 
     public static final ErrorMessageFormat MESSAGE_FORMAT = TABLE_SCHEMA_UNDEFINED;
 
-    private final DataSourceConstraint requestConstraints;
+    private final QueryPlanningConstraint requestConstraints;
 
     /**
      * Constructor saves metrics, dimensions, coarsest time grain, and logical table name (for logging).
      *
      * @param requestConstraints Contains the request constraints extracted from DataApiRequest and TemplateDruidQuery
      */
-    public SchemaPhysicalTableMatcher(DataSourceConstraint requestConstraints) {
+    public SchemaPhysicalTableMatcher(QueryPlanningConstraint requestConstraints) {
         this.requestConstraints = requestConstraints;
     }
 
